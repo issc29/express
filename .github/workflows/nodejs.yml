@@ -10,10 +10,7 @@ jobs:
     strategy:
       matrix:
         node-version: [4, 6, 8, 10]
-        include:
-          # includes a new variable of npm with a value of 2 for the matrix leg matching the os and version
-          - node-version: 4
-            npm: 2
+
           
 
     steps:
