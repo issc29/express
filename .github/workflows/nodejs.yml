@@ -49,6 +49,8 @@ jobs:
       if: matrix.envVar == "https://nodejs.org/download/nightly"
       env: 
         NVM_NODEJS_ORG_MIRROR: ${{ matrix.envVar }}
+      run: |
+        echo $envVar
     - run: |
         npm run test-ci
     - run: |
