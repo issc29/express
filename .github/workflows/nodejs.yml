@@ -10,9 +10,6 @@ jobs:
     strategy:
       matrix:
         node-version: [0.10, 0.12, 1.8, 2.5, 3.3, 4.9, 5.12, 6.17, 7.10, 8.16, 9.11, 10.15, 11.15, 12.3, 13]
-        include:
-          - node-version: 13
-            envVar: "https://nodejs.org/download/nightly"
           
 
     steps:
