@@ -9,7 +9,13 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [0.10, 0.12, 1.8, 2.5, 3.3, 4.9, 5.12, 6.17, 7.10, 8.16, 9.11, 10.15, 11.15, 12.3, 13]
+        os: [macOS-10.14, windows-2016, ubuntu-18.04]
+        node: [4, 6, 8, 10]
+        include:
+          # includes a new variable of npm with a value of 2 for the matrix leg matching the os and version
+          - os: windows-2016
+            node: 4
+            npm: 2
           
 
     steps:
