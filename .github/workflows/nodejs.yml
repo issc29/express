@@ -1,0 +1,59 @@
+name: Node CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [0.10, 0.12, 1.8, 2.5, 3.3, 4.9, 5.12, 6.17, 7.10, 8.16, 9.11, 10.15, 11.15, 12.3, 13]
+        include:
+          - node-version: 13
+            envVar: "https://nodejs.org/download/nightly"
+          
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: |
+        # Skip updating shrinkwrap / lock
+        npm config set shrinkwrap false
+    - run: |
+        # Remove example dependencies
+        npm rm --silent --save-dev connect-redis
+    - run: |
+        # mocha for testing
+        # - use 3.x for Node.js < 6
+        if [[ "$(cut -d. -f1 <<< "$TRAVIS_NODE_VERSION")" -lt 6 ]]; then
+          npm install --silent --save-dev mocha@3.5.3
+        fi
+    - run: |
+        # supertest for http calls
+        # - use 2.0.0 for Node.js < 4
+        if [[ "$(cut -d. -f1 <<< "$TRAVIS_NODE_VERSION")" -lt 4 ]]; then
+          npm install --silent --save-dev supertest@2.0.0
+        fi
+    - run: |
+        # Prune and rebuild node_modules
+        if [[ -d node_modules ]]; then
+          npm prune
+          npm rebuild
+        fi
+    - name: Set ENV
+      if: matrix.envVar == "https://nodejs.org/download/nightly"
+      env: 
+        NVM_NODEJS_ORG_MIRROR: ${{ matrix.envVar }}
+    - run: |
+        npm run test-ci
+    - run: |
+        npm run lint
+    - run: |
+        # Upload coverage to coveralls
+        npm install --save-dev coveralls@2.12.0
+        coveralls < ./coverage/lcov.info        
