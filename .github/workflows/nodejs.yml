@@ -9,11 +9,11 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [4, 6, 8, 10]
+        node-version: [ 12.3]
         include:	
           # includes a new variable of npm with a value of 2 for the matrix leg matching the os and version	
-          - node-version: 4	
-            npm: 2
+          - node-version: 13	
+            NVM_NODEJS_ORG_MIRROR: https://nodejs.org/download/nightly
 
     steps:
     - uses: actions/checkout@v1
@@ -21,6 +21,10 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
+    - env: 
+        NVM_NODEJS_ORG_MIRROR: matrix.NVM_NODEJS_ORG_MIRROR
+      run: |
+        echo $NVM_NODEJS_ORG_MIRROR
     - run: |
         # Skip updating shrinkwrap / lock
         npm config set shrinkwrap false
